@@ -20,3 +20,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::apiResource('/series', SeriesController::class);
+Route::post('/series/upload', [SeriesController::class, 'upload']);
+

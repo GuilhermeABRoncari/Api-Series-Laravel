@@ -13,7 +13,7 @@ class SeriesRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -25,6 +25,8 @@ class SeriesRequest extends FormRequest
     {
         return [
             'name'=> ['required','string','min:3'],
+            'seasonsQty'=> ['integer', 'min:1'],
+            'episodesPerSeason'=> ['integer', 'min:1'],
         ];
     }
 }
