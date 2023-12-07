@@ -40,4 +40,21 @@ class SeriesController extends Controller
 
         return response()->json(['file_path' => $coverPath]);
     }
+
+    public function show(int $seriesId)
+    {
+        return Series::find($seriesId);
+    }
+
+    public function update(SeriesRequest $request, int $seriesId)
+    {
+        Series::where('id', $seriesId)->update($request->all());
+        return response()->noContent();
+    }
+
+    public function destroy(int $seriesId)
+    {
+        Series::destroy($seriesId);
+        return response()->noContent();
+    }
 }
