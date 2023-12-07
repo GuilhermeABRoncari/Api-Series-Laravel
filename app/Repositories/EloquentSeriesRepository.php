@@ -13,9 +13,18 @@ class EloquentSeriesRepository implements SeriesRepository
 {
     public function add(SeriesRequest $request): Series
     {
-        return DB::transaction(function () use ($request, &$series) {
+        $coverPath = null;
+
+        if ($request->hasFile('cover')) {
+        $coverPath = $request->file('cover')->store('series_cover', 'public');
+        } else {
+        $coverPath = 'series_cover/base.jpg';
+        }
+
+        return DB::transaction(function () use ($request, &$series, &$coverPath) {
             $series = Series::create([
                 'name'=> $request->name,
+                'cover_path'=> $coverPath
             ]);
             $seasons = [];
             for ($i = 1; $i <= $request->seasonsQty; $i++) {

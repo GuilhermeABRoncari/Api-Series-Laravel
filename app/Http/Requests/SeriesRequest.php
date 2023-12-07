@@ -6,6 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class SeriesRequest extends FormRequest
 {
+    public int $id;
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -25,8 +26,8 @@ class SeriesRequest extends FormRequest
     {
         return [
             'name'=> ['required','string','min:3'],
-            'seasonsQty'=> ['integer', 'min:1'],
-            'episodesPerSeason'=> ['integer', 'min:1'],
+            'seasonsQty'=> ['required', 'integer', 'min:1'],
+            'episodesPerSeason'=> ['required', 'integer', 'min:1'],
         ];
     }
 }
