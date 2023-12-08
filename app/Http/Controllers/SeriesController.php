@@ -16,9 +16,12 @@ class SeriesController extends Controller
         $this->repository = $repository;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        return Series::all();
+        $query = Series::query();
+        if ($request->has('name')) $query->where('name', $request->name);
+
+        return $query->paginate(3);
     }
 
     public function store(SeriesRequest $request)
@@ -28,7 +31,11 @@ class SeriesController extends Controller
 
     public function show(int $seriesId)
     {
-        return Series::find($seriesId);
+        $seriesModel = Series::with('seasons.episodes')->find($seriesId);
+
+        if (!$seriesModel) return response()->json(['message'=> 'Series not found.'],404);
+
+        return $seriesModel;;
     }
 
     public function update(SeriesRequest $request, int $seriesId)
