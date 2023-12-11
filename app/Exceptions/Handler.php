@@ -3,7 +3,9 @@
 namespace App\Exceptions;
 
 use Throwable;
+use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Exceptions\DomainExceptions\AuthValidateException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
@@ -35,8 +37,32 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        $this->reportable(function (Throwable $e) {
-            //
+        $this->reportable(function (AuthValidateException $ex) { 
+            return $this->render(new Request(), $ex);
         });
+    }
+
+    /**
+     * Render an exception into an HTTP response.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \Throwable $exception
+     * @return \Symfony\Component\HttpFoundation\Response
+     *
+     * @throws \Throwable
+     */
+    public function render($request, Throwable $exception)
+    {
+        if ($exception instanceof AuthValidateException) {
+            $response = [
+                'message' => $exception->getMessage(),
+                'status_code' => $exception->getCode(),
+                'timestamp' => $exception->getFormattedTimestamp()
+            ];
+
+            return response()->json($response, $exception->getCode());
+        }
+
+        return parent::render($request, $exception);
     }
 }
