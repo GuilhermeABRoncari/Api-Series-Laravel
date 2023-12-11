@@ -27,9 +27,7 @@ class AuthController extends Controller
             ]);
         }
 
-        $token = $user->createToken('token')->plainTextToken;
-
-        return response()->json(['token' => $token], 201);
+        return response()->json(['token' => $this->generateToken($user)], 201);
     }
 
     public function login(Request $request)
@@ -39,8 +37,12 @@ class AuthController extends Controller
         if (!Auth::attempt($credendials)) {
             return response()->json('Unauthorized', 401);
         }
+        $user = Auth::user();
+        return response()->json(['token' => $this->generateToken($user)], 200);
+    }
 
-        $token = Auth::user()->createToken('token')->plainTextToken;
-        return response()->json(['token' => $token]);
+    private function generateToken($user): string
+    {
+        return $user->createToken('token')->plainTextToken;
     }
 }
