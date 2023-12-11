@@ -31,6 +31,7 @@ class AuthRegisterRequest extends FormRequest
                 'min:8',
                 'regex:/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/',
             ],
+            'password_confirmation' => 'required|same:password'
         ];
     }
 }
