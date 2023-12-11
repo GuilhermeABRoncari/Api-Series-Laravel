@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SeasonController;
 use App\Http\Controllers\SeriesController;
 use App\Http\Controllers\EpisodeController;
@@ -21,7 +22,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::apiResource('/series', SeriesController::class);
-Route::get('/series/{series}/seasons', [SeasonController::class, 'index']);
-Route::get('/series/{series}/episodes', [EpisodeController::class, 'EpisodesBySeries']);
-Route::patch('/episodes/{episode}', [EpisodeController::class, 'update']);
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('/series', SeriesController::class);
+    Route::get('/series/{series}/seasons', [SeasonController::class, 'index']);
+    Route::get('/series/{series}/episodes', [EpisodeController::class, 'EpisodesBySeries']);
+    Route::patch('/episodes/{episode}', [EpisodeController::class, 'update']);
+});
