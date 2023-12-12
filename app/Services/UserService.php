@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use DateTimeZone;
 use App\Models\User;
 use App\Dtos\UserDto;
 use Illuminate\Support\Facades\Auth;
@@ -34,10 +33,17 @@ class UserService
     public function authenticate(array $credentials): string
     {
         throw_if (!Auth::attempt($credentials), new AuthValidateException());
-
         $user = Auth::user();
-        
         return $this->generateToken($user);
+    }
+
+    public function deleteAccount(array $credentials, int $userId): void
+    {
+        $user = Auth::user();
+        if (Hash::check($credentials['password'], $user->password) && $user->id === $userId) {
+            $user = User::findOrFail($userId);
+            $user->delete();
+        } else throw new AuthValidateException();
     }
 
     private function generateToken($user): string
