@@ -27,6 +27,7 @@ Route::post('/login', [UserController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/users', [UserController::class, 'index']);
+    Route::patch('/account', [UserController::class, 'update']);
     Route::delete('/account/{user_id}', [UserController::class, 'destroy']);
 
     Route::apiResource('/series', SeriesController::class);

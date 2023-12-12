@@ -35,6 +35,12 @@ class UserController extends Controller
         return User::all();
     }
 
+    public function update(Request $request)
+    {
+        $validatedData = $request->validate(['name' => 'string']);
+        return response()->json(['data' => $this->userService->updateUser($validatedData)], HttpStatusCode::OK);
+    }
+
     public function destroy(UserDeleteRequest $request, int $userId)
     {
         $credentials = $request->validated();

@@ -37,6 +37,13 @@ class UserService
         return $this->generateToken($user);
     }
 
+    public function updateUser(array $data): User
+    {
+        $user = User::findOrFail(Auth::id());
+        $user->update(['name' => $data['name']]);
+        return $user;
+    }
+
     public function deleteAccount(array $credentials, int $userId): void
     {
         $user = Auth::user();
