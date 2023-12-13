@@ -6,6 +6,7 @@ use Throwable;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Exceptions\DomainExceptions\AuthValidateException;
+use App\Exceptions\DomainExceptions\EntityNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
@@ -40,6 +41,10 @@ class Handler extends ExceptionHandler
         $this->reportable(function (AuthValidateException $ex) { 
             return $this->render(new Request(), $ex);
         });
+
+        $this->reportable(function (EntityNotFoundException $ex) { 
+            return $this->render(new Request(), $ex);
+        });
     }
 
     /**
@@ -54,6 +59,16 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $exception)
     {
         if ($exception instanceof AuthValidateException) {
+            $response = [
+                'message' => $exception->getMessage(),
+                'status_code' => $exception->getCode(),
+                'timestamp' => $exception->getFormattedTimestamp()
+            ];
+
+            return response()->json($response, $exception->getCode());
+        }
+
+        if ($exception instanceof EntityNotFoundException) {
             $response = [
                 'message' => $exception->getMessage(),
                 'status_code' => $exception->getCode(),

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\DomainExceptions\EntityNotFoundException;
 use App\Http\Requests\EpisodeWatchedRequest;
 use App\Models\Series;
 use App\Models\Episode;
@@ -18,7 +19,7 @@ class EpisodeController extends Controller
     {
         $episode = Episode::find($episodeId);
 
-        if (!$episode) return response()->json(["message"=> "Episode not found for id = {$episodeId}"], 404);
+        throw_if (!$episode, new EntityNotFoundException($episodeId));
 
         $episode->watched = $request->watched;
         $episode->save();

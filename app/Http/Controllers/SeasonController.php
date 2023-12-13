@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\DomainExceptions\EntityNotFoundException;
 use App\Models\Season;
 use Illuminate\Http\Request;
 
@@ -11,7 +12,7 @@ class SeasonController extends Controller
     { 
         $seasonModel = Season::where('series_id', $seriesId)->with('episodes')->get();
 
-        if ($seasonModel->isEmpty()) return response()->json(['message'=> "Season not found for Series id = {$seriesId}"], 404);
+        throw_if ($seasonModel->isEmpty(), new EntityNotFoundException($seriesId));
         
         return $seasonModel;
     }

@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Series;
 use Illuminate\Http\Request;
+use App\Enums\HttpStatusCode;
 use App\Http\Requests\SeriesRequest;
 use App\Repositories\SeriesRepository;
+use App\Http\Requests\SeriesUpdateRequest;
+use App\Exceptions\DomainExceptions\EntityNotFoundException;
 
 class SeriesController extends Controller
 {
@@ -21,7 +24,7 @@ class SeriesController extends Controller
         $query = Series::query();
         if ($request->has('name')) $query->where('name', $request->name);
 
-        return $query->paginate(3);
+        return $query->paginate(5);
     }
 
     public function store(SeriesRequest $request)
@@ -33,13 +36,14 @@ class SeriesController extends Controller
     {
         $seriesModel = Series::with('seasons.episodes')->find($seriesId);
 
-        if (!$seriesModel) return response()->json(['message'=> 'Series not found.'],404);
+        throw_if (!$seriesModel, new EntityNotFoundException($seriesId));
 
-        return $seriesModel;;
+        return $seriesModel;
     }
 
-    public function update(SeriesRequest $request, int $seriesId)
+    public function update(SeriesUpdateRequest $request, int $seriesId)
     {
+        throw_if (!Series::find($seriesId), new EntityNotFoundException($seriesId));
         Series::where('id', $seriesId)->update($request->all());
         return response()->noContent();
     }
